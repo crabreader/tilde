@@ -44,7 +44,7 @@
     commandSearchDelimiter: ' ',
     defaultSearchTemplate: 'https://kagi.com/search?q={}',
     openLinksInNewTab: false,
-    suggestionLimit: 4,
+    suggestionLimit: 5,
   };
 
   // prettier-ignore
@@ -60,10 +60,11 @@
     ['g', { name: 'GMaps', searchTemplate: '/maps/search/{}', url: 'https://google.com/maps' }],
     ['l', { name: 'Lists', url: 'https://anilist.co' }],
     ['m', { name: 'MDE', url: 'https://mde.tv' }],
-    ['x', { name: 'server', suggestions: ['x/jelly', 'x/radarr', 'x/sonarr', 'x/qbit'], url: 'https://truenas.lan' }],
+    ['x', { name: 'server', suggestions: ['x/jelly', 'x/radarr', 'x/sonarr', 'x/prowlarr', 'x/qbit'], url: 'https://truenas.lan' }],
     ['x/jelly', { url: 'https://jellyfin.truenas.lan' }],
     ['x/radarr', { url: 'https://radarr.truenas.lan' }],
     ['x/sonarr', { url: 'https://sonarr.truenas.lan' }],
+    ['x/prowlarr', { url: 'https://prowlarr.truenas.lan' }],
     ['x/qbit', { url: 'https://qbit.truenas.lan' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
     ['0', { name: 'localhost', suggestions: ['0:5173', '0:54324'], url: 'http://localhost:3000' }],
