@@ -43,12 +43,16 @@
     commandPathDelimiter: '/',
     commandSearchDelimiter: ' ',
     defaultSearchTemplate: 'https://kagi.com/search?q={}',
-    openLinksInNewTab: true,
+    openLinksInNewTab: false,
     suggestionLimit: 4,
   };
 
   // prettier-ignore
   const COMMANDS = new Map([
+    ['4', { name: '4ch', suggestions: ['4/g', '4/v', '4/trv'], url: 'https://4chan.org' }],
+    ['4/g', { url: 'https://4chan.org/g' }],
+    ['4/v', { url: 'https://4chan.org/v' }],
+    ['4/trv', { url: 'https://4chan.org/trv' }],
     ['a', { name: 'AI', searchTemplate: '/?temporary-chat=true&q={}', suggestions: ['a/kagi', 'a/deepseek', 'a/gemini'], url: 'https://chatgpt.com/?temporary-chat=true' }],
     ['a/kagi', { url: 'https://kagi.com/assistant' }],
     ['a/deepseek', { url: 'https://chat.deepseek.com' }],
@@ -61,8 +65,8 @@
     ['x/sonarr', { url: 'https://sonarr.truenas.lan' }],
     ['x/qbit', { url: 'https://qbit.truenas.lan' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
-    ['0', { name: 'localhost', suggestions: ['0:54323', '0:54324'], url: 'http://localhost:3000' }],
-    ['0:54323', { url: 'http://localhost:54323' }],
+    ['0', { name: 'localhost', suggestions: ['0:5173', '0:54324'], url: 'http://localhost:3000' }],
+    ['0:54323', { url: 'http://localhost:5173' }],
     ['0:54324', { url: 'http://localhost:54324' }],
   ]);
 </script>
