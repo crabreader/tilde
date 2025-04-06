@@ -298,6 +298,51 @@
   <span class="match"></span>
 </template>
 
+<template id="quote-template">
+  <style>
+    .quote-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      padding: 1rem;
+      background-color: var(--color-background);
+      color: var(--color-text-subtle);
+      font-style: italic;
+      font-size: 0.9rem;
+      z-index: 10;
+      border-top: 1px solid var(--color-text-subtle, rgba(255, 255, 255, 0.1));
+    }
+
+    .quote-text {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .quote-text a {
+      color: var(--color-text);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--color-text-subtle);
+      transition: all 0.2s ease;
+    }
+
+    .quote-text a:hover {
+      color: var(--color-text-hover, #ffffff);
+      border-bottom-color: var(--color-text);
+    }
+  </style>
+  <div class="quote-container">
+    <div class="quote-text">
+      <span></span>
+    </div>
+  </div>
+</template>
+
+<div id="quoteContainer">
+  <span>Loading quote...</span>
+</div>
+
 <script type="module">
   class Search extends HTMLElement {
     #dialog;
@@ -528,6 +573,76 @@
   }
 
   customElements.define('search-component', Search);
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    getRandomQuote().then(displayQuote);
+  });
+
+  async function getRandomQuote() {
+    try {
+      const response = await fetch('https://api.vndb.org/kana/quote', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "fields": "vn{id,title},character{id,name},quote",
+          "filters": [ "random", "=", 1 ]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching quote:', error);
+    }
+  }
+
+  function displayQuote(data) {
+    // Example function to update the DOM with the quote data
+    if (!data) return;
+
+    console.log('API response:', data); // Add this to see the actual structure
+
+    const existingContainer = document.getElementById('quoteContainer');
+    if (existingContainer) {
+      existingContainer.remove();
+    }
+
+    // Get the template
+    const template = document.getElementById('quote-template');
+
+    // Create a clone of the template content
+    const clone = template.content.cloneNode(true);
+
+    // Find the span within the cloned template
+    const span = clone.querySelector('span');
+
+    let quoteHTML = "";
+
+    const quote = data.results[0].quote;
+    const vn = data.results[0].vn;
+    const vnLink = `<a href="https://vndb.org/${vn.id}" target="_blank" rel="noopener noreferrer">${vn.title}</a>`;
+
+    if (data.results[0].character) {
+      const character = data.results[0].character.name;
+      quoteHTML = `"${quote}" — ${character} from ${vnLink}`;
+    } else {
+      // No character information
+      quoteHTML = `"${quote}" from ${vnLink}`;
+    }
+
+    span.innerHTML = quoteHTML;
+
+    // Append the clone to the document body
+    document.body.appendChild(clone);
+  };
 </script>
 
 <style>
