@@ -1,4 +1,6 @@
 <!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8" />
 <meta name="color-scheme" content="dark light" />
 <meta name="robots" content="noindex" />
@@ -22,19 +24,188 @@
 
   :root {
     --color-background: #000;
-    --color-text-subtle: #888;
-    --color-text: #ccc;
-    --font-family: SpaceGrotesk, -apple-system, Helvetica, sans-serif;
-    --font-size: clamp(16px, 1.5vw, 18px);
-    --transition-speed: 200ms;
+    --color-text-subtle: #0a3d0a;
+    --color-text: #39ff14;
+    --color-text-dim: #1a8c1a;
+    --color-accent: #00ff41;
+    --color-warning: #ff6b35;
+    --glow: 0 0 12px rgba(57, 255, 20, 0.8);
+    --glow-strong: 0 0 25px rgba(0, 255, 65, 0.9), 0 0 40px rgba(0, 255, 65, 0.6);
+    --font-family: SpaceGrotesk, 'Share Tech Mono', 'Courier New', monospace, sans-serif;
+    --font-size: clamp(14px, 1.4vw, 16px);
+    --transition-speed: 150ms;
+    --border-glow: 0 0 5px rgba(57, 255, 20, 0.4);
+    --text-flicker: 0 0 3px #39ff14, 0 0 6px #39ff14, 0 0 12px #00ff41;
   }
 
   @media (prefers-color-scheme: light) {
     :root {
-      --color-background: #e8e8e8;
-      --color-text-subtle: #606060;
-      --color-text: #111;
+      --color-background: #000;
+      --color-text-subtle: #0a0;
+      --color-text: #0f0;
     }
+  }
+
+  /* CRT SCANLINES & NOISE */
+  html {
+    background-color: var(--color-background);
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    line-height: 1.4;
+    user-select: none;
+    overflow: hidden;
+  }
+
+  body {
+    margin: 0;
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100vh;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(57, 255, 20, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(0, 255, 65, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(57, 255, 20, 0.02) 0%, transparent 50%),
+      #000;
+    color: var(--color-text);
+    text-shadow: 0 0 2px #39ff14;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    animation: crt-flicker 4s ease-in-out infinite;
+  }
+
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  body::before {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    animation: static-flicker 0.15s infinite linear alternate;
+  }
+
+  body::after {
+    background: 
+      repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.2),
+        rgba(0, 0, 0, 0.2) 1px,
+        transparent 1px,
+        transparent 3px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(57, 255, 20, 0.02),
+        rgba(57, 255, 20, 0.02) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+    animation: scanline-drift 8s linear infinite;
+  }
+
+  @keyframes static-flicker {
+    0% { opacity: 0.04; }
+    100% { opacity: 0.06; }
+  }
+
+  @keyframes scanline-drift {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(4px); }
+  }
+
+  /* GLITCH EFFECTS */
+  @keyframes glitch {
+    0% { 
+      text-shadow: 0.02em 0 0 #ff6b35, -0.02em 0 0 #39ff14, 0 0 8px #00ff41; 
+      transform: translateX(0);
+    }
+    20% { 
+      text-shadow: 0.02em 0 0 #ff6b35, -0.02em 0 0 #39ff14, 0 0 8px #00ff41; 
+      transform: translateX(-1px);
+    }
+    40% { 
+      text-shadow: -0.02em 0 0 #ff6b35, 0.02em 0 0 #39ff14, 0 0 12px #00ff41; 
+      transform: translateX(1px);
+    }
+    60% { 
+      text-shadow: 0.02em 0 0 #39ff14, -0.02em 0 0 #ff6b35, 0 0 8px #00ff41; 
+      transform: translateX(0);
+    }
+    80% { 
+      text-shadow: -0.02em 0 0 #39ff14, 0.02em 0 0 #ff6b35, 0 0 15px #00ff41; 
+      transform: translateX(-0.5px);
+    }
+    100% { 
+      text-shadow: 0.02em 0 0 #ff6b35, -0.02em 0 0 #39ff14, 0 0 8px #00ff41; 
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes data-stream {
+    0% { 
+      opacity: 0.8;
+      text-shadow: 0 0 2px #39ff14;
+    }
+    50% { 
+      opacity: 1;
+      text-shadow: 0 0 8px #39ff14, 0 0 12px #00ff41;
+    }
+    100% { 
+      opacity: 0.8;
+      text-shadow: 0 0 2px #39ff14;
+    }
+  }
+
+  @keyframes pulse {
+    0% { 
+      box-shadow: 0 0 5px #39ff14;
+      border-color: var(--color-text-dim);
+    }
+    50% { 
+      box-shadow: var(--glow-strong);
+      border-color: var(--color-accent);
+    }
+    100% { 
+      box-shadow: 0 0 5px #39ff14;
+      border-color: var(--color-text-dim);
+    }
+  }
+
+  @keyframes text-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      text-shadow: var(--text-flicker);
+      opacity: 1;
+    }
+    20%, 24%, 55% {
+      text-shadow: none;
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { 
+      transform: translateY(0) scale(1);
+    }
+    50% { 
+      transform: translateY(-3px) scale(1.005);
+    }
+  }
+
+  /* CRT Curvature Effect */
+  @keyframes crt-flicker {
+    0%, 100% { filter: brightness(1) contrast(1.05); }
+    50% { filter: brightness(1.02) contrast(1.08) hue-rotate(1deg); }
+  }
+
+  body {
+    animation: crt-flicker 4s ease-in-out infinite;
   }
 </style>
 
@@ -75,10 +246,12 @@
     ['x/qbit', { url: 'https://qbit.truenas.lan' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/' }],
     ['0', { name: 'localhost', suggestions: ['0:5173', '0:54324'], url: 'http://localhost:3000' }],
-    ['0:54323', { url: 'http://localhost:5173' }],
+    ['0:5173', { url: 'http://localhost:5173' }],
     ['0:54324', { url: 'http://localhost:54324' }],
   ]);
 </script>
+</head>
+<body>
 
 <template id="commands-template">
   <style>
@@ -98,6 +271,7 @@
       list-style: none;
       margin: 0;
       padding: 0;
+      gap: 0.5rem;
     }
 
     .command {
@@ -111,30 +285,68 @@
       text-align: center;
       text-decoration: none;
       width: 4em;
+      border: 1px solid var(--color-text-subtle);
+      background: rgba(0, 0, 0, 0.7);
+      transition: all var(--transition-speed);
+      backdrop-filter: blur(1px);
+      box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.1);
+    }
+
+    .command:where(:focus, :hover) {
+      border-color: var(--color-accent);
+      transform: scale(1.08) perspective(100px) rotateX(2deg);
+      background: rgba(57, 255, 20, 0.05);
+      box-shadow: 
+        var(--border-glow),
+        inset 0 0 20px rgba(57, 255, 20, 0.2);
+    }
+
+    .command:hover .key,
+    .command:hover .name {
+      animation: glitch 0.4s infinite, text-flicker 2s infinite;
+    }
+
+    .command:active {
+      transform: scale(1.02);
+      box-shadow: 
+        0 0 15px rgba(255, 107, 53, 0.6),
+        inset 0 0 25px rgba(255, 107, 53, 0.1);
     }
 
     .key {
-      color: var(--color-text-subtle);
+      color: var(--color-text-dim);
       position: absolute;
       transition: all var(--transition-speed);
+      font-weight: 500;
+      font-size: 1.1em;
+      text-shadow: 0 0 3px #39ff14;
+      animation: data-stream 3s ease-in-out infinite;
     }
 
     .command:where(:focus, :hover) .key {
       opacity: 0;
       pointer-events: none;
-      transform: translateY(1.5em) scale(0.9);
+      transform: translateY(1.8em) scale(0.85) rotateX(15deg);
+      color: var(--color-warning);
     }
 
     .name {
       opacity: 0;
       pointer-events: none;
-      transform: translateY(-1.5em) scale(0.9);
+      transform: translateY(-1.8em) scale(0.85) rotateX(-15deg);
       transition: all var(--transition-speed);
+      font-size: 0.8em;
+      font-weight: 400;
+      text-shadow: 0 0 4px #39ff14;
+      color: var(--color-accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     .command:where(:focus, :hover) .name {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1) rotateX(0deg);
+      animation: text-flicker 1.5s infinite;
     }
 
     @media (min-width: 35rem) {
@@ -157,34 +369,6 @@
   </li>
 </template>
 
-<script type="module">
-  class Commands extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-      const template = document.getElementById('commands-template');
-      const clone = template.content.cloneNode(true);
-      const commands = clone.querySelector('.commands');
-      const commandTemplate = document.getElementById('command-template');
-
-      for (const [key, { name, url }] of COMMANDS.entries()) {
-        if (!name || !url) continue;
-        const clone = commandTemplate.content.cloneNode(true);
-        const command = clone.querySelector('.command');
-        command.href = url;
-        if (CONFIG.openLinksInNewTab) command.target = '_blank';
-        clone.querySelector('.key').innerText = key;
-        clone.querySelector('.name').innerText = name;
-        commands.append(clone);
-      }
-
-      this.shadowRoot.append(clone);
-    }
-  }
-
-  customElements.define('commands-component', Commands);
-</script>
-
 <template id="search-template">
   <style>
     input,
@@ -200,8 +384,10 @@
 
     .dialog {
       align-items: center;
-      background: var(--color-background);
-      border: none;
+      background: 
+        radial-gradient(circle at center, rgba(57, 255, 20, 0.03) 0%, transparent 70%),
+        linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+      border: 2px solid var(--color-text-dim);
       display: none;
       flex-direction: column;
       height: 100%;
@@ -210,10 +396,26 @@
       padding: 0;
       top: 0;
       width: 100%;
+      box-shadow: 
+        var(--glow-strong),
+        inset 0 0 50px rgba(57, 255, 20, 0.05);
+      backdrop-filter: blur(5px);
     }
 
     .dialog[open] {
       display: flex;
+      animation: matrix-fade-in 0.3s ease-out;
+    }
+
+    @keyframes matrix-fade-in {
+      from {
+        opacity: 0;
+        transform: scale(0.95) perspective(500px) rotateX(10deg);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) perspective(500px) rotateX(0deg);
+      }
     }
 
     .form {
@@ -222,11 +424,29 @@
 
     .input {
       color: var(--color-text);
-      font-size: 2rem;
-      font-weight: bold;
-      padding: 0;
+      font-size: 2.2rem;
+      font-weight: 300;
+      padding: 1rem 0;
       text-align: center;
       width: 100%;
+      border-bottom: 2px solid var(--color-text-dim);
+      margin-bottom: 2rem;
+      background: transparent;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px #39ff14;
+      transition: all var(--transition-speed);
+    }
+
+    .input:focus {
+      box-shadow: var(--glow-strong);
+      animation: pulse 1.8s infinite;
+      border-bottom-color: var(--color-accent);
+      text-shadow: var(--text-flicker);
+    }
+
+    .input::placeholder {
+      color: var(--color-text-subtle);
+      opacity: 0.6;
     }
 
     .suggestions {
@@ -239,47 +459,77 @@
       margin: 1rem 0 0;
       overflow: hidden;
       padding: 0;
+      width: 100%;
+      max-width: 600px;
     }
 
     .suggestion {
       color: var(--color-text);
       cursor: pointer;
       font-size: 1rem;
-      padding: 1rem;
+      padding: 1.2rem;
       position: relative;
-      transition: color var(--transition-speed);
+      transition: all var(--transition-speed);
       white-space: nowrap;
-      z-index: 1;
+      width: 100%;
+      text-align: center;
+      border-top: 1px solid var(--color-text-subtle);
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(2px);
+      font-weight: 300;
+      letter-spacing: 0.5px;
+    }
+
+    .suggestion:first-child {
+      border-top: none;
     }
 
     .suggestion:where(:focus, :hover) {
       color: var(--color-background);
+      background: var(--color-accent);
+      text-shadow: none;
+      transform: scale(1.02) perspective(100px) rotateX(2deg);
+      box-shadow: 
+        0 0 15px rgba(0, 255, 65, 0.5),
+        inset 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .suggestion:active {
+      transform: scale(0.98);
+      background: var(--color-warning);
     }
 
     .suggestion::before {
-      background-color: var(--color-text);
-      border-radius: 0.1em;
+      background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-text) 100%);
+      border-radius: 0.2em;
       content: ' ';
-      inset: 0.9em 0.5em;
+      inset: 0.8em 0.4em;
       opacity: 0;
       position: absolute;
-      transform: translateY(0.3em) scale(0.9);
+      transform: translateY(0.4em) scale(0.85) perspective(100px) rotateX(10deg);
       transition: all var(--transition-speed);
       z-index: -1;
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
     }
 
     .suggestion:where(:focus, :hover)::before {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1) perspective(100px) rotateX(0deg);
     }
 
     .match {
-      color: var(--color-text-subtle);
-      transition: color var(--transition-speed);
+      color: var(--color-background);
+      font-weight: 600;
+      text-shadow: 0 0 4px #39ff14;
+      background: rgba(255, 107, 53, 0.8);
+      padding: 0.1em 0.2em;
+      border-radius: 0.1em;
     }
 
     .suggestion:where(:focus, :hover) .match {
       color: var(--color-background);
+      background: rgba(0, 0, 0, 0.4);
+      text-shadow: 0 0 2px var(--color-background);
     }
 
     @media (min-width: 700px) {
@@ -314,30 +564,42 @@
       left: 0;
       width: 100%;
       text-align: center;
-      padding: 1rem;
-      background-color: var(--color-background);
-      color: var(--color-text-subtle);
+      padding: 1.5rem;
+      background: 
+        linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.85) 40%, rgba(0, 0, 0, 0.95) 100%);
+      color: var(--color-text-dim);
       font-style: italic;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 300;
       z-index: 10;
-      border-top: 1px solid var(--color-text-subtle, rgba(255, 255, 255, 0.1));
+      border-top: 1px solid var(--color-text-subtle);
+      text-shadow: 0 0 8px rgba(57, 255, 20, 0.4);
+      animation: float 8s ease-in-out infinite, data-stream 4s ease-in-out infinite;
+      backdrop-filter: blur(3px);
+      letter-spacing: 0.3px;
+      box-shadow: 0 -5px 20px rgba(57, 255, 20, 0.1);
     }
 
     .quote-text {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
+      line-height: 1.6;
     }
 
     .quote-text a {
-      color: var(--color-text);
+      color: var(--color-accent);
       text-decoration: none;
-      border-bottom: 1px dotted var(--color-text-subtle);
-      transition: all 0.2s ease;
+      border-bottom: 1px dotted var(--color-text-dim);
+      transition: all 0.3s ease;
+      font-weight: 400;
     }
 
     .quote-text a:hover {
-      color: var(--color-text-hover, #ffffff);
-      border-bottom-color: var(--color-text);
+      color: var(--color-text);
+      text-shadow: var(--text-flicker);
+      border-bottom-color: var(--color-accent);
+      transform: perspective(100px) rotateX(5deg);
+      display: inline-block;
     }
   </style>
   <div class="quote-container">
@@ -350,6 +612,34 @@
 <div id="quoteContainer">
   <span>Loading quote...</span>
 </div>
+
+<script type="module">
+  class Commands extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      const template = document.getElementById('commands-template');
+      const clone = template.content.cloneNode(true);
+      const commands = clone.querySelector('.commands');
+      const commandTemplate = document.getElementById('command-template');
+
+      for (const [key, { name, url }] of COMMANDS.entries()) {
+        if (!name || !url) continue;
+        const clone = commandTemplate.content.cloneNode(true);
+        const command = clone.querySelector('.command');
+        command.href = url;
+        if (CONFIG.openLinksInNewTab) command.target = '_blank';
+        clone.querySelector('.key').innerText = key;
+        clone.querySelector('.name').innerText = name;
+        commands.append(clone);
+      }
+
+      this.shadowRoot.append(clone);
+    }
+  }
+
+  customElements.define('commands-component', Commands);
+</script>
 
 <script type="module">
   class Search extends HTMLElement {
@@ -393,9 +683,12 @@
 
         const script = document.createElement('script');
         document.querySelector('head').appendChild(script);
-        // script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${search}`;
-        script.src = `https://kagi.com/api/autosuggest?q=${search}`;
+        script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${encodeURIComponent(search)}`;
         script.onload = script.remove;
+        script.onerror = () => {
+          resolve([]);
+          script.remove();
+        };
       });
     }
 
@@ -414,20 +707,20 @@
     static #parseQuery = (raw) => {
       const query = raw.trim();
 
-      if (this.#isUrl(query)) {
-        const url = this.#hasProtocol(query) ? query : `https://${query}`;
+      if (Search.#isUrl(query)) {
+        const url = Search.#hasProtocol(query) ? query : `https://${query}`;
         return { query, url };
       }
 
       if (COMMANDS.has(query)) {
-        const { key, url } = COMMANDS.get(query);
-        return { key, query, url };
+        const command = COMMANDS.get(query);
+        return { key: query, query, url: command.url };
       }
 
       let splitBy = CONFIG.commandSearchDelimiter;
       const [searchKey, rawSearch] = query.split(new RegExp(`${splitBy}(.*)`));
 
-      if (COMMANDS.has(searchKey)) {
+      if (COMMANDS.has(searchKey) && rawSearch) {
         const command = COMMANDS.get(searchKey);
         const template = new URL(command.searchTemplate ?? '', command.url);
         const search = rawSearch.trim();
@@ -438,7 +731,7 @@
       splitBy = CONFIG.commandPathDelimiter;
       const [pathKey, path] = query.split(new RegExp(`${splitBy}(.*)`));
 
-      if (COMMANDS.has(pathKey)) {
+      if (COMMANDS.has(pathKey) && path) {
         const command = COMMANDS.get(pathKey);
         const url = `${new URL(command.url).origin}/${path}`;
         return { key: pathKey, path, query, splitBy, url };
@@ -465,7 +758,7 @@
       const active = this.shadowRoot.activeElement;
       let nextIndex;
 
-      if (active.dataset.index) {
+      if (active && active.dataset.index) {
         const activeIndex = Number(active.dataset.index);
         nextIndex = previous ? activeIndex - 1 : activeIndex + 1;
       } else {
@@ -481,20 +774,23 @@
       const oq = Search.#parseQuery(this.#input.value);
 
       if (!oq.query) {
-        this.#close();
+        this.#suggestions.innerHTML = '';
         return;
       }
 
       let suggestions = COMMANDS.get(oq.query)?.suggestions ?? [];
 
       if (oq.search && suggestions.length < CONFIG.suggestionLimit) {
-        const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
-
-        suggestions = suggestions.concat(
-          oq.splitBy
-            ? res.map((search) => `${oq.key}${oq.splitBy}${search}`)
-            : res
-        );
+        try {
+          const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
+          suggestions = suggestions.concat(
+            oq.splitBy
+              ? res.map((search) => `${oq.key}${oq.splitBy}${search}`)
+              : res
+          );
+        } catch (error) {
+          console.warn('Failed to fetch search suggestions:', error);
+        }
       }
 
       const nq = Search.#parseQuery(this.#input.value);
@@ -508,8 +804,6 @@
         this.#input.focus();
 
         requestAnimationFrame(() => {
-          // close the search dialog before the next repaint if a character is
-          // not produced (e.g. if you type shift, control, alt etc.)
           if (!this.#input.value) this.#close();
         });
 
@@ -539,7 +833,8 @@
       }
     };
 
-    #onSubmit = () => {
+    #onSubmit = (e) => {
+      e.preventDefault();
       this.#execute(this.#input.value);
     };
 
@@ -563,15 +858,15 @@
         const matched = suggestion.match(new RegExp(escapedQuery, 'i'));
 
         if (matched) {
-          const template = document.getElementById('match-template');
-          const clone = template.content.cloneNode(true);
-          const matchRef = clone.querySelector('.match');
+          const matchTemplate = document.getElementById('match-template');
+          const matchClone = matchTemplate.content.cloneNode(true);
+          const matchRef = matchClone.querySelector('.match');
           const pre = suggestion.slice(0, matched.index);
           const post = suggestion.slice(matched.index + matched[0].length);
           matchRef.innerText = matched[0];
           matchRef.insertAdjacentHTML('beforebegin', pre);
           matchRef.insertAdjacentHTML('afterend', post);
-          ref.append(clone);
+          ref.append(matchClone);
         } else {
           ref.innerText = suggestion;
         }
@@ -610,27 +905,25 @@
       return data;
     } catch (error) {
       console.error('Error fetching quote:', error);
+      return null;
     }
   }
 
   function displayQuote(data) {
-    // Example function to update the DOM with the quote data
-    if (!data) return;
+    if (!data || !data.results || data.results.length === 0) {
+      console.warn('No quote data available');
+      return;
+    }
 
-    console.log('API response:', data); // Add this to see the actual structure
+    console.log('API response:', data);
 
     const existingContainer = document.getElementById('quoteContainer');
     if (existingContainer) {
       existingContainer.remove();
     }
 
-    // Get the template
     const template = document.getElementById('quote-template');
-
-    // Create a clone of the template content
     const clone = template.content.cloneNode(true);
-
-    // Find the span within the cloned template
     const span = clone.querySelector('span');
 
     let quoteHTML = "";
@@ -643,30 +936,16 @@
       const character = data.results[0].character.name;
       quoteHTML = `"${quote}" — ${character} from ${vnLink}`;
     } else {
-      // No character information
       quoteHTML = `"${quote}" from ${vnLink}`;
     }
 
     span.innerHTML = quoteHTML;
-
-    // Append the clone to the document body
     document.body.appendChild(clone);
-  };
+  }
 </script>
-
-<style>
-  html {
-    background-color: var(--color-background);
-    font-family: var(--font-family);
-    font-size: var(--font-size);
-    line-height: 1.4;
-    user-select: none;
-  }
-
-  body {
-    margin: 0;
-  }
-</style>
 
 <commands-component></commands-component>
 <search-component></search-component>
+
+</body>
+</html>
