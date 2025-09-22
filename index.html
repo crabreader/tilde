@@ -52,7 +52,7 @@
     commandPathDelimiter: '/',
     commandSearchDelimiter: ' ',
     defaultSearchTemplate: 'https://kagi.com/search?q={}',  // Changed to Kagi
-    openLinksInNewTab: true,
+    openLinksInNewTab: false,  // Changed to false - links won't open in new tab
     suggestionLimit: 8,
     keyPressTimeout: 500,
     maxHistoryItems: 50,
@@ -68,33 +68,36 @@
     Object.assign(CONFIG, JSON.parse(savedConfig));
   }
 
-  // Command registry with explicit metadata - Added Kagi command
+  // Your new commands
   const COMMANDS = new Map([
-    ['a', { name: 'AI', searchTemplate: '/?temporary-chat=true&q={}', suggestions: ['a/claude', 'a/deepseek', 'a/gemini', 'a/grok', 'a/perplexity'], url: 'https://chatgpt.com/?temporary-chat=true', category: 'ai', accessKey: 'a', lastUsed: null, useCount: 0 }],
-    ['a/claude', { name: 'Claude', url: 'https://claude.ai/new', category: 'ai', parent: 'a', lastUsed: null, useCount: 0 }],
+    ['4', { name: '4ch', suggestions: ['4/g', '4/v', '4/trv'], url: 'https://4chan.org', category: 'forums', accessKey: '4', lastUsed: null, useCount: 0 }],
+    ['4/g', { name: '/g/ - Technology', url: 'https://4chan.org/g', category: 'forums', parent: '4', lastUsed: null, useCount: 0 }],
+    ['4/v', { name: '/v/ - Video Games', url: 'https://4chan.org/v', category: 'forums', parent: '4', lastUsed: null, useCount: 0 }],
+    ['4/trv', { name: '/trv/ - Travel', url: 'https://4chan.org/trv', category: 'forums', parent: '4', lastUsed: null, useCount: 0 }],
+    ['a', { name: 'AI', searchTemplate: '/?temporary-chat=true&q={}', suggestions: ['a/kagi', 'a/deepseek', 'a/gemini'], url: 'https://chatgpt.com/?temporary-chat=true', category: 'ai', accessKey: 'a', lastUsed: null, useCount: 0 }],
+    ['a/kagi', { name: 'Kagi Assistant', url: 'https://kagi.com/assistant', category: 'ai', parent: 'a', lastUsed: null, useCount: 0 }],
     ['a/deepseek', { name: 'DeepSeek', url: 'https://chat.deepseek.com', category: 'ai', parent: 'a', lastUsed: null, useCount: 0 }],
-    ['a/gemini', { name: 'Gemini', url: 'https://gemini.google.com', category: 'ai', parent: 'a', lastUsed: null, useCount: 0 }],
-    ['a/grok', { name: 'Grok', url: 'https://grok.com', category: 'ai', parent: 'a', lastUsed: null, useCount: 0 }],
-    ['a/perplexity', { name: 'Perplexity', url: 'https://www.perplexity.ai', category: 'ai', parent: 'a', lastUsed: null, useCount: 0 }],
-    ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com', category: 'infrastructure', accessKey: 'c', lastUsed: null, useCount: 0 }],
-    ['d', { name: 'Discord', url: 'https://discord.com/channels/@me', category: 'communication', accessKey: 'd', lastUsed: null, useCount: 0 }],
-    ['f', { name: 'Finances', url: 'https://docs.google.com/spreadsheets/d/1sjSOdlKaE-BcraiEDjqfakCXietLTSUY1ny6gQTj-oQ/edit', category: 'productivity', accessKey: 'f', lastUsed: null, useCount: 0 }],
-    ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com', category: 'development', accessKey: 'g', lastUsed: null, useCount: 0 }],
-    ['g/copilot', { name: 'GitHub Copilot', url: 'https://github.com/copilot', category: 'development', parent: 'g', lastUsed: null, useCount: 0 }],
-    ['g/trending', { name: 'GitHub Trending', url: 'https://github.com/trending', category: 'development', parent: 'g', lastUsed: null, useCount: 0 }],
-    ['h', { name: 'Hetzner', url: 'https://console.hetzner.cloud/projects', category: 'infrastructure', accessKey: 'h', lastUsed: null, useCount: 0 }],
-    ['i', { name: 'Intuit', url: 'https://qbo.intuit.com', category: 'finance', accessKey: 'i', lastUsed: null, useCount: 0 }],
-    ['p', { name: 'Proton', suggestions: ['p/drive', 'p/lumo','p/pass'], url: 'https://mail.proton.me/u/0/inbox', category: 'privacy', accessKey: 'p', lastUsed: null, useCount: 0 }],
-    ['p/drive', { name: 'Proton Drive', url: 'https://drive.proton.me/u/0', category: 'privacy', parent: 'p', lastUsed: null, useCount: 0 }],
-    ['p/lumo', { name: 'Proton Lumo', url: 'https://pass.proton.me/u/0', category: 'privacy', parent: 'p', lastUsed: null, useCount: 0 }],
-    ['p/pass', { name: 'Proton Pass', url: 'https://pass.proton.me/u/0', category: 'privacy', parent: 'p', lastUsed: null, useCount: 0 }],
-    ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects', category: 'infrastructure', accessKey: 's', lastUsed: null, useCount: 0 }],
-    ['t', { name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks', category: 'productivity', accessKey: 't', lastUsed: null, useCount: 0 }],
-    ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard', category: 'infrastructure', accessKey: 'v', lastUsed: null, useCount: 0 }],
-    ['x', { name: 'x', url: 'https://x.com/home', category: 'social', accessKey: 'x', lastUsed: null, useCount: 0 }],
-    ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions', category: 'media', accessKey: 'y', lastUsed: null, useCount: 0 }],
-    ['0', { name: 'localhost', suggestions: ['0:54323', '0:54324'], url: 'http://localhost:3000', category: 'development', accessKey: '0', lastUsed: null, useCount: 0 }],
+    ['a/chatgpt', { name: 'ChatGPT', url: 'https://chatgpt.com', category: 'ai', parent: 'a', lastUsed: null, useCount: 0 }],
+    ['g', { name: 'GMaps', searchTemplate: '/maps/search/{}', url: 'https://google.com/maps', category: 'navigation', accessKey: 'g', lastUsed: null, useCount: 0 }],
+    ['l', { name: 'Lists', url: 'https://anilist.co', category: 'media', accessKey: 'l', lastUsed: null, useCount: 0 }],
+    ['m', { name: 'MDE', url: 'https://mde.tv', category: 'media', accessKey: 'm', lastUsed: null, useCount: 0 }],
+    ['t', { name: 'torrent', suggestions: ['t/avista', 't/cinema', 't/privatehd', 't/nyaa', 't/tl', 't/ru'], url: 'https://nyaa.si', category: 'torrents', accessKey: 't', lastUsed: null, useCount: 0 }],
+    ['t/avista', { name: 'AvistaZ', url: 'https://avistaz.to', category: 'torrents', parent: 't', lastUsed: null, useCount: 0 }],
+    ['t/cinema', { name: 'CinemaZ', url: 'https://cinemaz.to', category: 'torrents', parent: 't', lastUsed: null, useCount: 0 }],
+    ['t/privatehd', { name: 'PrivateHD', url: 'https://privatehd.to', category: 'torrents', parent: 't', lastUsed: null, useCount: 0 }],
+    ['t/nyaa', { name: 'Nyaa', url: 'https://nyaa.si', category: 'torrents', parent: 't', lastUsed: null, useCount: 0 }],
+    ['t/tl', { name: 'TorrentLeech', url: 'https://www.torrentleech.org', category: 'torrents', parent: 't', lastUsed: null, useCount: 0 }],
+    ['t/ru', { name: 'RuTracker', url: 'https://rutracker.org', category: 'torrents', parent: 't', lastUsed: null, useCount: 0 }],
+    ['x', { name: 'server', suggestions: ['x/jelly', 'x/radarr', 'x/sonarr', 'x/prowlarr', 'x/qbit'], url: 'https://truenas.lan', category: 'server', accessKey: 'x', lastUsed: null, useCount: 0 }],
+    ['x/jelly', { name: 'Jellyfin', url: 'https://jellyfin.truenas.lan', category: 'server', parent: 'x', lastUsed: null, useCount: 0 }],
+    ['x/radarr', { name: 'Radarr', url: 'https://radarr.truenas.lan', category: 'server', parent: 'x', lastUsed: null, useCount: 0 }],
+    ['x/sonarr', { name: 'Sonarr', url: 'https://sonarr.truenas.lan', category: 'server', parent: 'x', lastUsed: null, useCount: 0 }],
+    ['x/prowlarr', { name: 'Prowlarr', url: 'https://prowlarr.truenas.lan', category: 'server', parent: 'x', lastUsed: null, useCount: 0 }],
+    ['x/qbit', { name: 'qBittorrent', url: 'https://qbit.truenas.lan', category: 'server', parent: 'x', lastUsed: null, useCount: 0 }],
+    ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/', category: 'media', accessKey: 'y', lastUsed: null, useCount: 0 }],
+    ['0', { name: 'localhost', suggestions: ['0:5173', '0:54324'], url: 'http://localhost:3000', category: 'development', accessKey: '0', lastUsed: null, useCount: 0 }],
     ['0:54323', { name: 'localhost:54323', url: 'http://localhost:54323', category: 'development', parent: '0', lastUsed: null, useCount: 0 }],
+    ['0:5173', { name: 'localhost:5173', url: 'http://localhost:5173', category: 'development', parent: '0', lastUsed: null, useCount: 0 }],
     ['0:54324', { name: 'localhost:54324', url: 'http://localhost:54324', category: 'development', parent: '0', lastUsed: null, useCount: 0 }],
   ]);
 
@@ -137,8 +140,11 @@
   };
 </script>
 
+<!-- Rest of the HTML remains the same, but I'll update the specific parts that handle link opening -->
+
 <template id="commands-template">
   <style>
+    /* All styles remain the same */
     :host {
       display: block;
       width: 100%;
@@ -1120,7 +1126,8 @@
       const link = document.createElement('a');
       link.className = 'command';
       link.href = command.url;
-      if (CONFIG.openLinksInNewTab) link.target = '_blank';
+      // Removed: if (CONFIG.openLinksInNewTab) link.target = '_blank';
+      // Links will now open in the same tab
       link.rel = 'noopener noreferrer';
       link.dataset.key = command.key;
 
